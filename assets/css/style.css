@@ -1,0 +1,11 @@
+html {
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  word-wrap: break-word;
+}
+
+.btn-spacing {
+  margin-right: 5px;
+}
