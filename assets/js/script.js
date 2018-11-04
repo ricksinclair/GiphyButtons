@@ -11,7 +11,13 @@ to read by non-authors.
 */
 
 //Our topics array will hold all search strings/button labels.
-var topics = ["Thundercats", "He  Man", "Voltron", "Thundar"];
+var topics = [
+  "Thundercats",
+  "He  Man",
+  "Voltron",
+  "Dragon Ball",
+  "Transformers"
+];
 
 //This button div will hold all buttons that we generate.
 var buttonDiv = $("#buttonDiv");
