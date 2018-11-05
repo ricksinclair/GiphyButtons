@@ -24,6 +24,9 @@ var topics = [
   "Transformers"
 ];
 
+//this array will track animation for each image
+var animated = [];
+
 //This button div will hold all buttons that we generate.
 var buttonDiv = $("#buttonDiv");
 
@@ -73,6 +76,8 @@ generateButtons();
 //selects buttons in button div "buttonDiv" and queries using their value
 $("#buttonDiv").on("click", "button", function() {
   giphyAPICall($(this).val());
+  //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
+  previousQuery = $(this).val();
 });
 
 function giphyAPICall(query) {
@@ -89,12 +94,14 @@ function giphyAPICall(query) {
     //not sure if its redundant to declare the variable or not, but i did
     var responseLocal = response;
     var results = responseLocal.data;
+    //lets verify things before moving forward
     console.log(responseLocal);
     console.log(query);
     console.log("i is: " + i);
     var div = $("<div>", { id: i, class: "container row" });
     $("#results").prepend(div);
-
+    //this will get us 50 results at a time, leaving us with plenty of images and
+    //an even layout.
     for (x = 0; x < 50; x++) {
       count++;
       console.log(
@@ -104,42 +111,62 @@ function giphyAPICall(query) {
           results[x].title
       );
       var picture = results[x].images.original_still.url;
-
+      var pictureAnimated = results[x].images.preview_gif.url;
+      console.log(picture);
       //yes, i did this in one append call.
 
-      $("#" + i).append(
-        "<div id=card" +
-          count +
-          "><img class=card-img-top id=picture" +
-          count +
-          " src=" +
-          picture +
-          "></img><div class=card-body><h2 id=title" +
-          count +
-          ">  " +
-          results[x].title +
-          "</h2> <p class=card-text id=rating" +
-          count +
-          "> Rating: " +
-          results[x].rating +
-          "</p>   <p id=itemnumber" +
-          count +
-          ">  RESULT#" +
-          count +
-          "</p></div></div> "
-      );
+      $("#" + i)
+        .append(
+          "<div id=card" +
+            count +
+            "><img class=card-img-top id=picture" +
+            count +
+            " src=" +
+            picture +
+            "></img><div class=card-body><h2 id=title" +
+            count +
+            ">  " +
+            results[x].title +
+            "</h2> <p class=card-text id=rating" +
+            count +
+            "> Rating: " +
+            results[x].rating +
+            "</p>   <p id=itemnumber" +
+            count +
+            ">  RESULT#" +
+            count +
+            "</p></div></div> "
+        )
+        .click(function() {
+          if (animated[count - 1] === false) {
+            console.log("animated = " + animated[count - 1]);
+
+            $("#picture" + count + "").attr("src", pictureAnimated);
+            animated[count - 1] = true;
+          } else if (animated[count - 1]) {
+            console.log("animated = " + animated[count - 1]);
+
+            $("#picture" + count + "").attr("src", picture);
+            animated[count - 1] = false;
+          }
+        });
 
       $("#card" + count + "").attr(
         "class",
         "card col-sm-6 text-center d-block mx-auto"
       );
       $("#title" + count + "").attr("class", "col-12 card-title");
-      $("#picture" + count + "").attr("class", "card-img-top");
+      $("#picture" + count + "").attr({ class: "card-img-top" });
+
+      //I figured I'd track an
+      animated[count - 1] = false;
+
+      console.log(pictureAnimated);
 
       $("#itemnumber" + count + "").attr("class", "col-12 card-text");
-      $("#year" + count + "").attr("class", "col-12 card-text");
+      $("#rating" + count + "").attr("class", "col-12 card-text");
     }
     $("#" + i + "").append("<h5>PAGE: " + i + "</h5>");
   });
-  offset = i * 25;
+  offset = i * 50;
 }
