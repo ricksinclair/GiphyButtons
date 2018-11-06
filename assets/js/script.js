@@ -8,7 +8,18 @@ I created a mess of code on that last assignment that made it difficult to follo
 
 This time around I am going to pseudocode each section to make things easier 
 to read by non-authors.
+
+main issues
+===========
+
+at line 212---------- I can't get images to switch (more details below)       
+
+
 */
+
+//I added this variable in an attempt to stop the on click funtion of the buttons
+//from looping twice on user created buttons(corresponding code around lines 64&68). unfortunately the behaviour persists.
+var clickCount = 0;
 //this will tell me the item number for each picture/card
 var count = 0;
 //this will be the actual offset that gives us the different pages.
@@ -32,6 +43,9 @@ var previousQuery = "";
 
 //this function will handle creation of buttons.
 function generateButtons() {
+  //Found solution for syntax here.http://jsfiddle.net/o4fyqvk7/
+  //selects buttons in button div "buttonDiv" and queries using their value
+
   //clear all current buttons(as to not generate duplicates)
   $(buttonDiv).empty();
   //loop through every string contained in array topics
@@ -53,6 +67,34 @@ function generateButtons() {
   }
   //remove text from search box after completing button add
   $("#searchBox").val("");
+
+  $("#buttonDiv").on("click", "button", function() {
+    clickCount++;
+
+    console.log("click! Click count is: " + clickCount);
+    //make the results reset if the same button isn't pressed
+    if (previousQuery !== $(this).val()) {
+      $("#results").empty();
+
+      console.log("queries are not the same");
+      clickCount = 0;
+      console.log("click count reset to zero");
+      count = 0;
+      offset = 0;
+      i = 0;
+      picture = [];
+      pictureAnimated = [];
+
+      giphyAPICall($(this).val());
+      console.log("query is: " + $(this).val());
+    } else if (previousQuery == $(this).val() && clickCount > 1) {
+      console.log("queries are the same click count greater than zero");
+      //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
+      giphyAPICall($(this).val());
+    }
+    console.log("previous query is: " + previousQuery);
+    previousQuery = $(this).val();
+  });
 }
 //We have to tell our button to take the value of the text input once clicked....
 $("#submitButton").on("click", function() {
@@ -71,32 +113,6 @@ $("#submitButton").on("click", function() {
 });
 //this function call will generate the buttons the user sees at page load.
 generateButtons();
-
-//Found solution for syntax here.http://jsfiddle.net/o4fyqvk7/
-//selects buttons in button div "buttonDiv" and queries using their value
-$("#buttonDiv").on("click", "button", function() {
-  //tried to make the results reset if the same button isn't pressed
-  if (previousQuery !== $(this).val()) {
-    console.log("queries are not the same");
-
-    count = 0;
-    i = 0;
-    picture = [];
-    pictureAnimated = [];
-    giphyAPICall($(this).val());
-
-    console.log("query is: " + $(this).val());
-    console.log("previous query is: " + previousQuery);
-
-    previousQuery = $(this).val();
-
-    console.log("previous query is: " + previousQuery);
-  } else if (previousQuery == $(this).val()) {
-    console.log("queries are the same");
-    //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
-    giphyAPICall($(this).val());
-  }
-});
 
 function giphyAPICall(query) {
   offset = i * 10;
@@ -130,13 +146,13 @@ function giphyAPICall(query) {
           " Title is:" +
           results[x].title
       );
-
+      //this adds all still urls into an array
       picture.push(results[x].images.original_still.url);
       console.log("picture at index x is: ");
       //this is coming up as undefined with subsequent mouse clicks.
 
       console.log(picture[count - 1]);
-
+      //this adds all animated urls into an array
       pictureAnimated.push(results[x].images.preview_webp.url);
       console.log("picture Animated at index x is: ");
       console.log(pictureAnimated[count - 1]);
@@ -185,27 +201,29 @@ function giphyAPICall(query) {
       $("#itemnumber" + count + "").attr("class", "col-12 card-text");
       $("#rating" + count + "").attr("class", "col-12 card-text");
     }
+    i++;
     $("#" + i + "").append("<h5>PAGE: " + i + "</h5>");
   });
   console.log("offset is: " + offset);
-  i++;
-  $(".giphy").on("click", this, function() {
+
+  //I'm trying to take the attribute i stored in each img tag (see inspector on each image in elements view)
+  //and assign it as the source if it detects one or the other (if this then that and if that then this essentially).
+  //attribute "picture animated" stores the animated gif Url while attribute "picture" stores the still url.
+  //this is just a one-way test with failure notification to get the syntax right.
+  //its halting on error instead of printing "failed" to console.
+  $("#results").on("click", "img", function() {
+    console.log($(this).val());
     console.log("click!");
     if (
-      $(".giphy").attr(
+      $(this).attr(
         "src" ===
           $(this)
-            .attr("picture")
+            .attr("pictureanimated")
             .val()
       )
     ) {
       console.log($(this));
-      $(this).attr(
-        "src",
-        $(this)
-          .attr("pictureanimated")
-          .val()
-      );
+      $(this).attr("src", $(this).attr("picture"));
     } else {
       //trying to get it to click any item with class giphy(which would be the pictures.)
       console.log("failed");
