@@ -28,6 +28,7 @@ var animated = [];
 
 //This button div will hold all buttons that we generate.
 var buttonDiv = $("#buttonDiv");
+var previousQuery = "";
 
 //this function will handle creation of buttons.
 function generateButtons() {
@@ -74,18 +75,36 @@ generateButtons();
 //Found solution for syntax here.http://jsfiddle.net/o4fyqvk7/
 //selects buttons in button div "buttonDiv" and queries using their value
 $("#buttonDiv").on("click", "button", function() {
-  giphyAPICall($(this).val());
-  //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
-  previousQuery = $(this).val();
+  //tried to make the results reset if the same button isn't pressed
+  if (previousQuery !== $(this).val()) {
+    console.log("queries are not the same");
+
+    count = 0;
+    i = 0;
+    picture = [];
+    pictureAnimated = [];
+    giphyAPICall($(this).val());
+
+    console.log("query is: " + $(this).val());
+    console.log("previous query is: " + previousQuery);
+
+    previousQuery = $(this).val();
+
+    console.log("previous query is: " + previousQuery);
+  } else if (previousQuery == $(this).val()) {
+    console.log("queries are the same");
+    //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
+    giphyAPICall($(this).val());
+  }
 });
 
 function giphyAPICall(query) {
-  offset = i * 50;
+  offset = i * 10;
 
   var url =
     "https://api.giphy.com/v1/gifs/search?api_key=ZUudWxxOOtymCzKktG3lHi5D88JFvLfQ&q=" +
     query +
-    "&limit=50&offset=" +
+    "&limit=10&offset=" +
     offset +
     "&lang=en";
   console.log(url);
@@ -103,7 +122,7 @@ function giphyAPICall(query) {
     $("#results").prepend(div);
     //this will get us 50 results at a time, leaving us with plenty of images and
     //an even layout.
-    for (x = 0; x < 50; x++) {
+    for (x = 0; x < 10; x++) {
       count++;
       console.log(
         "index of current object Array is: " +
@@ -120,7 +139,6 @@ function giphyAPICall(query) {
 
       pictureAnimated.push(results[x].images.preview_webp.url);
       console.log("picture Animated at index x is: ");
-      //this is coming up as undefined with subsequent mouse clicks.
       console.log(pictureAnimated[count - 1]);
       //yes, i constructed the cards in 1 append call.
 
