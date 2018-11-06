@@ -22,7 +22,7 @@ var offset = 0;
 //i will keep a count of each page. i will multiply i by 25 to get the offset
 var i = 0;
 //Our topics array will hold all search strings/button labels.
-var topics = ["dog", "kittens", "monkeys", "bunnies"];
+var topics = ["akira", "dragon ball z", "thunder cats", "voltron"];
 
 //declare these to catch URL values for still and for
 var pictureAnimated = [];
