@@ -23,7 +23,8 @@ var topics = [
   "Dragon Ball",
   "Transformers"
 ];
-
+//needed this to be global
+var x;
 //this array will track animation for each image
 var animated = [];
 
@@ -94,11 +95,15 @@ function giphyAPICall(query) {
     //not sure if its redundant to declare the variable or not, but i did
     var responseLocal = response;
     var results = responseLocal.data;
+    //declare these to catch URL values for still and for
+    var pictureAnimated = [];
+    var picture = [];
     //lets verify things before moving forward
     console.log(responseLocal);
     console.log(query);
     console.log("i is: " + i);
     var div = $("<div>", { id: i, class: "container row" });
+
     $("#results").prepend(div);
     //this will get us 50 results at a time, leaving us with plenty of images and
     //an even layout.
@@ -110,10 +115,18 @@ function giphyAPICall(query) {
           " Title is:" +
           results[x].title
       );
-      var picture = results[x].images.original_still.url;
-      var pictureAnimated = results[x].images.preview_gif.url;
-      console.log(picture);
-      //yes, i did this in one append call.
+
+      picture.push(results[x].images.original_still.url);
+      console.log("picture at index x is: ");
+      //this is coming up as undefined with subsequent mouse clicks.
+
+      console.log(picture[count - 1]);
+
+      pictureAnimated.push(results[x].images.preview_gif.url);
+      console.log("picture Animated at index x is: ");
+      //this is coming up as undefined with subsequent mouse clicks.
+      console.log(pictureAnimated[count - 1]);
+      //yes, i constructed the cards in 1 append call.
 
       $("#" + i)
         .append(
@@ -122,7 +135,7 @@ function giphyAPICall(query) {
             "><img class=card-img-top id=picture" +
             count +
             " src=" +
-            picture +
+            picture[count - 1] +
             "></img><div class=card-body><h2 id=title" +
             count +
             ">  " +
@@ -138,15 +151,23 @@ function giphyAPICall(query) {
             "</p></div></div> "
         )
         .click(function() {
+          //did count-1 since we interated before forming page 1. otherwise the first index will be undefined.
+          //I'm trying to create an on/off value for each picture on the page and store it in an array.
+          //unfortunately, I'm only accessing the last image of each new page.
+          //my onclick event is also incrementing 50 times, instead of getting the url at the index.
+          //i'm thinking of putting all urls in a single object in an array the size of count-1
+
           if (animated[count - 1] === false) {
-            console.log("animated = " + animated[count - 1]);
-
-            $("#picture" + count + "").attr("src", pictureAnimated);
+            console.log(
+              "animated = " + animated[count - 1] + " at count: " + count
+            );
+            $("#picture" + count + "").attr("src", pictureAnimated[count - 1]);
             animated[count - 1] = true;
-          } else if (animated[count - 1]) {
-            console.log("animated = " + animated[count - 1]);
-
-            $("#picture" + count + "").attr("src", picture);
+          } else {
+            console.log(
+              "animated = " + animated[count - 1] + " at count: " + count
+            );
+            $("#picture" + count + "").attr("src", picture[count - 1]);
             animated[count - 1] = false;
           }
         });
