@@ -16,13 +16,7 @@ var offset = 0;
 //i will keep a count of each page. i will multiply i by 25 to get the offset
 var i = 0;
 //Our topics array will hold all search strings/button labels.
-var topics = [
-  "Thundercats",
-  "He  Man",
-  "Voltron",
-  "Dragon Ball",
-  "Transformers"
-];
+var topics = ["dog", "kittens", "monkeys", "bunnies"];
 
 //declare these to catch URL values for still and for
 var pictureAnimated = [];
@@ -168,6 +162,7 @@ function giphyAPICall(query) {
         "pictureAnimated",
         pictureAnimated[count - 1]
       );
+      $("#picture" + count + "").attr("index", count - 1);
       $("#picture" + count + "").attr("picture", picture[count - 1]);
       $("#itemnumber" + count + "").attr("class", "col-12 card-text");
       $("#rating" + count + "").attr("class", "col-12 card-text");
@@ -178,7 +173,6 @@ function giphyAPICall(query) {
   i++;
   $(".giphy").on("click", this, function() {
     console.log("click!");
-    //need regex to find anything that contains .webp or .gif at same key (as mached in id )
     if (
       $(".giphy").attr(
         "src" ===
@@ -195,6 +189,7 @@ function giphyAPICall(query) {
           .val()
       );
     } else {
+      //trying to get it to click any item with class giphy(which would be the pictures.)
       console.log("failed");
     }
   });
