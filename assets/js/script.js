@@ -9,11 +9,6 @@ I created a mess of code on that last assignment that made it difficult to follo
 This time around I am going to pseudocode each section to make things easier 
 to read by non-authors.
 
-main issues
-===========
-
-at line 212---------- I can't get images to switch (more details below)       
-
 
 */
 
@@ -72,8 +67,10 @@ function generateButtons() {
     clickCount++;
 
     console.log("click! Click count is: " + clickCount);
-    //make the results reset if the same button isn't pressed
-    if (previousQuery !== $(this).val()) {
+    //make the results variables reset if the same button isn't pressed
+    if (previousQuery === "") {
+      giphyAPICall($(this).val());
+    } else if (previousQuery !== $(this).val()) {
       $("#results").empty();
 
       console.log("queries are not the same");
@@ -101,7 +98,7 @@ $("#submitButton").on("click", function() {
   //stop the form from asking for total page reload
   event.preventDefault();
   //append the user defined string into the array at the last(greatest) index.
-  //ot will also remove uneeded whitepace from the front and back of the stsring.
+  //it will also remove redundant whitepace from the front and back of the stsring.
   topics.push(
     $("input[name=search]")
       .val()
@@ -140,22 +137,13 @@ function giphyAPICall(query) {
     //an even layout.
     for (x = 0; x < 10; x++) {
       count++;
-      console.log(
-        "index of current object Array is: " +
-          x +
-          " Title is:" +
-          results[x].title
-      );
+
       //this adds all still urls into an array
       picture.push(results[x].images.original_still.url);
-      console.log("picture at index x is: ");
-      //this is coming up as undefined with subsequent mouse clicks.
 
-      console.log(picture[count - 1]);
       //this adds all animated urls into an array
-      pictureAnimated.push(results[x].images.preview_webp.url);
-      console.log("picture Animated at index x is: ");
-      console.log(pictureAnimated[count - 1]);
+      pictureAnimated.push(results[x].images.original.url);
+
       //yes, i constructed the cards in 1 append call.
 
       $("#" + i).append(
@@ -164,7 +152,7 @@ function giphyAPICall(query) {
           "><img class=card-img-top id=picture" +
           count +
           " src=" +
-          pictureAnimated[count - 1] +
+          picture[count - 1] +
           "></img><div class=card-body><h2 id=title" +
           count +
           ">  " +
@@ -185,19 +173,27 @@ function giphyAPICall(query) {
         "card col-sm-6 text-center d-block mx-auto"
       );
       $("#title" + count + "").attr("class", "col-12 card-title");
-      $("#picture" + count + "").attr({ class: "card-img-top giphy" });
+      $("#picture" + count + "").attr("class", "card-img-top giphy");
 
       //I figured I'd track an
       animated[count - 1] = false;
       //confirm things are incrementing.
       console.log(pictureAnimated);
 
+      //this  arrray stores the animated url corresponding the the picture
       $("#picture" + count + "").attr(
         "pictureAnimated",
         pictureAnimated[count - 1]
       );
       $("#picture" + count + "").attr("index", count - 1);
+
+      //this  arrray stores the still url corresponding the the picture
       $("#picture" + count + "").attr("picture", picture[count - 1]);
+
+      //this tracks and sets default data state
+      $("#picture" + count + "").attr("data-state", "still");
+
+      //tracks the result number of each image and the rating
       $("#itemnumber" + count + "").attr("class", "col-12 card-text");
       $("#rating" + count + "").attr("class", "col-12 card-text");
     }
@@ -206,27 +202,17 @@ function giphyAPICall(query) {
   });
   console.log("offset is: " + offset);
 
-  //I'm trying to take the attribute i stored in each img tag (see inspector on each image in elements view)
-  //and assign it as the source if it detects one or the other (if this then that and if that then this essentially).
-  //attribute "picture animated" stores the animated gif Url while attribute "picture" stores the still url.
-  //this is just a one-way test with failure notification to get the syntax right.
-  //its halting on error instead of printing "failed" to console.
-  $("#results").on("click", "img", function() {
-    console.log($(this).val());
+  $(document).on("click", ".giphy", function() {
     console.log("click!");
-    if (
-      $(this).attr(
-        "src" ===
-          $(this)
-            .attr("pictureanimated")
-            .val()
-      )
-    ) {
-      console.log($(this));
+    var state = $(this).attr("data-state");
+    //if the state is still change it to animated
+    if (state === "still") {
+      $(this).attr("src", $(this).attr("pictureanimated"));
+      $(this).attr("data-state", "animated");
+      //or if the state is animated, change it to still.
+    } else if (state === "animated") {
       $(this).attr("src", $(this).attr("picture"));
-    } else {
-      //trying to get it to click any item with class giphy(which would be the pictures.)
-      console.log("failed");
+      $(this).attr("data-state", "still");
     }
   });
 }
