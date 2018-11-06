@@ -151,11 +151,14 @@ function giphyAPICall(query) {
             "</p></div></div> "
         )
         .click(function() {
-          //did count-1 since we interated before forming page 1. otherwise the first index will be undefined.
+          //did count-1 since we iterated before forming page 1. otherwise the first index will be undefined.
           //I'm trying to create an on/off value for each picture on the page and store it in an array.
           //unfortunately, I'm only accessing the last image of each new page.
+          //the 2nd page of imgs is coming up as undefined.
           //my onclick event is also incrementing 50 times, instead of getting the url at the index.
           //i'm thinking of putting all urls in a single object in an array the size of count-1
+          // or storing the urls as custom attributes in each img tag the calling the on click fn
+          //and referencing everything using the "this" keyword.
 
           if (animated[count - 1] === false) {
             console.log(
@@ -181,7 +184,7 @@ function giphyAPICall(query) {
 
       //I figured I'd track an
       animated[count - 1] = false;
-
+      //confirm things are incrementing.
       console.log(pictureAnimated);
 
       $("#itemnumber" + count + "").attr("class", "col-12 card-text");
