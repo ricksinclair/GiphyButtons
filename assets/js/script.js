@@ -165,7 +165,7 @@ function giphyAPICall(query) {
           count +
           ">  RESULT#" +
           count +
-          "</p></div></div> "
+          "</p></div> "
       );
 
       $("#card" + count + "").attr(
@@ -198,7 +198,7 @@ function giphyAPICall(query) {
       $("#rating" + count + "").attr("class", "col-12 card-text");
     }
     i++;
-    $("#" + i + "").append("<h5>PAGE: " + i + "</h5>");
+    $("#card" + count + "").after("<h5>PAGE: " + i + "</h5>");
   });
   console.log("offset is: " + offset);
 
