@@ -23,6 +23,10 @@ var topics = [
   "Dragon Ball",
   "Transformers"
 ];
+
+//declare these to catch URL values for still and for
+var pictureAnimated = [];
+var picture = [];
 //needed this to be global
 var x;
 //this array will track animation for each image
@@ -95,9 +99,7 @@ function giphyAPICall(query) {
     //not sure if its redundant to declare the variable or not, but i did
     var responseLocal = response;
     var results = responseLocal.data;
-    //declare these to catch URL values for still and for
-    var pictureAnimated = [];
-    var picture = [];
+
     //lets verify things before moving forward
     console.log(responseLocal);
     console.log(query);
