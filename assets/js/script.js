@@ -86,7 +86,7 @@ $("#buttonDiv").on("click", "button", function() {
 });
 
 function giphyAPICall(query) {
-  i++;
+  offset = i * 50;
 
   var url =
     "https://api.giphy.com/v1/gifs/search?api_key=ZUudWxxOOtymCzKktG3lHi5D88JFvLfQ&q=" +
@@ -124,75 +124,78 @@ function giphyAPICall(query) {
 
       console.log(picture[count - 1]);
 
-      pictureAnimated.push(results[x].images.preview_gif.url);
+      pictureAnimated.push(results[x].images.preview_webp.url);
       console.log("picture Animated at index x is: ");
       //this is coming up as undefined with subsequent mouse clicks.
       console.log(pictureAnimated[count - 1]);
       //yes, i constructed the cards in 1 append call.
 
-      $("#" + i)
-        .append(
-          "<div id=card" +
-            count +
-            "><img class=card-img-top id=picture" +
-            count +
-            " src=" +
-            picture[count - 1] +
-            "></img><div class=card-body><h2 id=title" +
-            count +
-            ">  " +
-            results[x].title +
-            "</h2> <p class=card-text id=rating" +
-            count +
-            "> Rating: " +
-            results[x].rating +
-            "</p>   <p id=itemnumber" +
-            count +
-            ">  RESULT#" +
-            count +
-            "</p></div></div> "
-        )
-        .click(function() {
-          //did count-1 since we iterated before forming page 1. otherwise the first index will be undefined.
-          //I'm trying to create an on/off value for each picture on the page and store it in an array.
-          //unfortunately, I'm only accessing the last image of each new page.
-          //the 2nd page of imgs is coming up as undefined.
-          //my onclick event is also incrementing 50 times, instead of getting the url at the index.
-          //i'm thinking of putting all urls in a single object in an array the size of count-1
-          // or storing the urls as custom attributes in each img tag the calling the on click fn
-          //and referencing everything using the "this" keyword.
-
-          if (animated[count - 1] === false) {
-            console.log(
-              "animated = " + animated[count - 1] + " at count: " + count
-            );
-            $("#picture" + count + "").attr("src", pictureAnimated[count - 1]);
-            animated[count - 1] = true;
-          } else {
-            console.log(
-              "animated = " + animated[count - 1] + " at count: " + count
-            );
-            $("#picture" + count + "").attr("src", picture[count - 1]);
-            animated[count - 1] = false;
-          }
-        });
+      $("#" + i).append(
+        "<div id=card" +
+          count +
+          "><img class=card-img-top id=picture" +
+          count +
+          " src=" +
+          pictureAnimated[count - 1] +
+          "></img><div class=card-body><h2 id=title" +
+          count +
+          ">  " +
+          results[x].title +
+          "</h2> <p class=card-text id=rating" +
+          count +
+          "> Rating: " +
+          results[x].rating +
+          "</p>   <p id=itemnumber" +
+          count +
+          ">  RESULT#" +
+          count +
+          "</p></div></div> "
+      );
 
       $("#card" + count + "").attr(
         "class",
         "card col-sm-6 text-center d-block mx-auto"
       );
       $("#title" + count + "").attr("class", "col-12 card-title");
-      $("#picture" + count + "").attr({ class: "card-img-top" });
+      $("#picture" + count + "").attr({ class: "card-img-top giphy" });
 
       //I figured I'd track an
       animated[count - 1] = false;
       //confirm things are incrementing.
       console.log(pictureAnimated);
 
+      $("#picture" + count + "").attr(
+        "pictureAnimated",
+        pictureAnimated[count - 1]
+      );
+      $("#picture" + count + "").attr("picture", picture[count - 1]);
       $("#itemnumber" + count + "").attr("class", "col-12 card-text");
       $("#rating" + count + "").attr("class", "col-12 card-text");
     }
     $("#" + i + "").append("<h5>PAGE: " + i + "</h5>");
   });
-  offset = i * 50;
+  console.log("offset is: " + offset);
+  i++;
+  $(".giphy").on("click", this, function() {
+    console.log("click!");
+    //need regex to find anything that contains .webp or .gif at same key (as mached in id )
+    if (
+      $(".giphy").attr(
+        "src" ===
+          $(this)
+            .attr("picture")
+            .val()
+      )
+    ) {
+      console.log($(this));
+      $(this).attr(
+        "src",
+        $(this)
+          .attr("pictureanimated")
+          .val()
+      );
+    } else {
+      console.log("failed");
+    }
+  });
 }
