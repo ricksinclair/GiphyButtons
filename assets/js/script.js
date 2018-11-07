@@ -10,6 +10,10 @@ This time around I am going to pseudocode each section to make things easier
 to read by non-authors.
 
 
+known issues
+===========
+
+
 */
 
 //I added this variable in an attempt to stop the on click funtion of the buttons
@@ -34,7 +38,7 @@ var animated = [];
 
 //This button div will hold all buttons that we generate.
 var buttonDiv = $("#buttonDiv");
-var previousQuery = "";
+var previousQuery = "firstrun";
 
 //this function will handle creation of buttons.
 function generateButtons() {
@@ -62,37 +66,8 @@ function generateButtons() {
   }
   //remove text from search box after completing button add
   $("#searchBox").val("");
-
-  $("#buttonDiv").on("click", "button", function() {
-    clickCount++;
-
-    console.log("click! Click count is: " + clickCount);
-    //make the results variables reset if the same button isn't pressed
-    if (previousQuery === "") {
-      giphyAPICall($(this).val());
-    } else if (previousQuery !== $(this).val()) {
-      $("#results").empty();
-
-      console.log("queries are not the same");
-      clickCount = 0;
-      console.log("click count reset to zero");
-      count = 0;
-      offset = 0;
-      i = 0;
-      picture = [];
-      pictureAnimated = [];
-
-      giphyAPICall($(this).val());
-      console.log("query is: " + $(this).val());
-    } else if (previousQuery == $(this).val() && clickCount > 1) {
-      console.log("queries are the same click count greater than zero");
-      //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
-      giphyAPICall($(this).val());
-    }
-    console.log("previous query is: " + previousQuery);
-    previousQuery = $(this).val();
-  });
 }
+
 //We have to tell our button to take the value of the text input once clicked....
 $("#submitButton").on("click", function() {
   //stop the form from asking for total page reload
@@ -133,7 +108,7 @@ function giphyAPICall(query) {
     var div = $("<div>", { id: i, class: "container row" });
 
     $("#results").prepend(div);
-    //this will get us 50 results at a time, leaving us with plenty of images and
+    //this will get us 10 results at a time, leaving us with plenty of images and
     //an even layout.
     for (x = 0; x < 10; x++) {
       count++;
@@ -175,8 +150,6 @@ function giphyAPICall(query) {
       $("#title" + count + "").attr("class", "col-12 card-title");
       $("#picture" + count + "").attr("class", "card-img-top giphy");
 
-      //I figured I'd track an
-      animated[count - 1] = false;
       //confirm things are incrementing.
       console.log(pictureAnimated);
 
@@ -197,15 +170,57 @@ function giphyAPICall(query) {
       $("#itemnumber" + count + "").attr("class", "col-12 card-text");
       $("#rating" + count + "").attr("class", "col-12 card-text");
     }
+    $("#card" + count + "").after("<h5>PAGE: " + parseInt(i + 1) + "</h5>");
     i++;
-    $("#card" + count + "").after("<h5>PAGE: " + i + "</h5>");
   });
   console.log("offset is: " + offset);
+}
+
+$("#buttonDiv").on("click", "button", function() {
+  clickCount++;
+  console.log("click! Click count is: " + clickCount);
+  //make the results variables reset if the same button isn't pressed
+  if (previousQuery == "firstrun" || previousQuery !== $(this).val()) {
+    giphyAPICall($(this).val());
+    clearClickAct();
+  } else if (previousQuery !== $(this).val() && previousQuery !== "firstrun") {
+    $("#results").empty();
+
+    console.log("queries are not the same");
+    clickCount = 0;
+    console.log("click count reset to zero");
+    count = 0;
+    offset = 0;
+    i = 0;
+    picture = [];
+    pictureAnimated = [];
+
+    giphyAPICall($(this).val());
+    console.log("query is: " + $(this).val());
+    clearClickAct();
+  } else {
+    console.log("queries are the same");
+    //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
+    giphyAPICall($(this).val());
+    clearClickAct();
+  }
+  console.log("previous query is: " + previousQuery);
+  previousQuery = $(this).val();
+});
+
+// had to create this function for each time I updated to the page to "clear" the click events and stop them from incrementing.
+
+function clearClickAct() {
+  $(document).off("click", ".giphy");
 
   $(document).on("click", ".giphy", function() {
-    console.log("click!");
     var state = $(this).attr("data-state");
-    //if the state is still change it to animated
+
+    //this increments by a factor of 2 each time. trying to see why they stop being clickable after each page.
+    console.log("click!");
+
+    //if the state is still change it to
+    animated;
     if (state === "still") {
       $(this).attr("src", $(this).attr("pictureanimated"));
       $(this).attr("data-state", "animated");
@@ -214,5 +229,6 @@ function giphyAPICall(query) {
       $(this).attr("src", $(this).attr("picture"));
       $(this).attr("data-state", "still");
     }
+    console.log($(this).attr("data-state"));
   });
 }
