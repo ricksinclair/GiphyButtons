@@ -47,6 +47,7 @@ function generateButtons() {
 
   //clear all current buttons(as to not generate duplicates)
   $(buttonDiv).empty();
+  console.log("BUTTON/TOPIC LIST:");
   //loop through every string contained in array topics
   for (y = 0; y < topics.length; y++) {
     console.log(topics[y]);
@@ -178,17 +179,16 @@ function giphyAPICall(query) {
 
 $("#buttonDiv").on("click", "button", function() {
   clickCount++;
+  //verify click function is only  running once.x`x
   console.log("click! Click count is: " + clickCount);
+
+  //make the results variables/page counts reset if the same button isn't pressed
 
   if (previousQuery == $(this).val() || previousQuery == "firstrun") {
     console.log("this is the first run or queries are the same");
-    //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
     giphyAPICall($(this).val());
     clearClickAct();
-  }
-
-  //make the results variables reset if the same button isn't pressed
-  else if (previousQuery !== $(this).val() && previousQuery !== "firstrun") {
+  } else if (previousQuery !== $(this).val() && previousQuery !== "firstrun") {
     $("#results").empty();
 
     console.log("queries are not the same");
