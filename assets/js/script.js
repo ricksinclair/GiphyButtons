@@ -179,11 +179,16 @@ function giphyAPICall(query) {
 $("#buttonDiv").on("click", "button", function() {
   clickCount++;
   console.log("click! Click count is: " + clickCount);
-  //make the results variables reset if the same button isn't pressed
-  if (previousQuery == "firstrun" || previousQuery !== $(this).val()) {
+
+  if (previousQuery == $(this).val() || previousQuery == "firstrun") {
+    console.log("this is the first run or queries are the same");
+    //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
     giphyAPICall($(this).val());
     clearClickAct();
-  } else if (previousQuery !== $(this).val() && previousQuery !== "firstrun") {
+  }
+
+  //make the results variables reset if the same button isn't pressed
+  else if (previousQuery !== $(this).val() && previousQuery !== "firstrun") {
     $("#results").empty();
 
     console.log("queries are not the same");
@@ -197,11 +202,6 @@ $("#buttonDiv").on("click", "button", function() {
 
     giphyAPICall($(this).val());
     console.log("query is: " + $(this).val());
-    clearClickAct();
-  } else {
-    console.log("queries are the same");
-    //this will help us increment the pictures only when is the same query, otherwise it'll fetch for a new count.
-    giphyAPICall($(this).val());
     clearClickAct();
   }
   console.log("previous query is: " + previousQuery);
