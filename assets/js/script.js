@@ -215,8 +215,8 @@ function clearClickAct() {
 
   $(document).on("click", ".giphy", function() {
     var state = $(this).attr("data-state");
+    //used this to determine if click event was broken..it was because I didn't clear the event and reload it after every new page was generated.
 
-    //this increments by a factor of 2 each time. trying to see why they stop being clickable after each page.
     console.log("click!");
 
     //if the state is still change it to
